@@ -1,6 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,12 +25,12 @@ public class TournamentGroup {
     private int frenchScore = 0;
     private Long germanPlayer = Long.valueOf(0);
     private int germanScore = 0;
-    private int numPlayers = 0;
-    private LocalDate createdAt = LocalDate.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public TournamentGroup() {
     }
 
+    // constructor for saving tournament group after according to player country
     public TournamentGroup(Long tournamentId, int turkishPlayer, int usPlayer, int ukPlayer, int frenchPlayer,
             int germanPlayer) {
         this.tournamentId = tournamentId;
@@ -44,7 +44,6 @@ public class TournamentGroup {
         this.ukScore = 0;
         this.frenchScore = 0;
         this.germanScore = 0;
-        this.numPlayers = 0;
     }
 
     public TournamentGroup(Long tournamentId,
@@ -53,7 +52,7 @@ public class TournamentGroup {
             Long ukPlayer,
             int ukScore,
             Long frenchPlayer, int frenchScore,
-            Long germanPlayer, int germanScore, int numPlayers, LocalDate createdAt) {
+            Long germanPlayer, int germanScore, LocalDateTime createdAt) {
         this.tournamentId = tournamentId;
         this.turkishPlayer = turkishPlayer;
         this.turkishScore = turkishScore;
@@ -65,7 +64,6 @@ public class TournamentGroup {
         this.frenchScore = frenchScore;
         this.germanPlayer = germanPlayer;
         this.germanScore = germanScore;
-        this.numPlayers = numPlayers;
         this.createdAt = createdAt;
     }
 
@@ -165,19 +163,11 @@ public class TournamentGroup {
         this.germanScore = germanScore;
     }
 
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-    }
-
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

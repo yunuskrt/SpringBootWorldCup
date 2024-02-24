@@ -45,7 +45,6 @@ CREATE TABLE if not exists tournament_group (
     french_score INT DEFAULT 0,
     german_player INT DEFAULT 0,
     german_score INT DEFAULT 0,
-    num_players INT DEFAULT 0,
     created_at DATE NOT NULL,
     FOREIGN KEY (tournament_id) REFERENCES tournament(id) ON UPDATE CASCADE ON DELETE NO ACTION
 );

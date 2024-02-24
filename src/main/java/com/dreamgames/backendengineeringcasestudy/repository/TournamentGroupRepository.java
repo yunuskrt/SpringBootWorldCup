@@ -1,5 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,9 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface TournamentGroupRepository extends JpaRepository<TournamentGroup, Long> {
+
+    @Query("SELECT tg FROM TournamentGroup tg WHERE tg.tournamentId = :tournamentId AND :playerId IN (tg.turkishPlayer, tg.usPlayer, tg.ukPlayer, tg.frenchPlayer, tg.germanPlayer)")
+    List<TournamentGroup> findPlayerInActiveTournament(Long tournamentId, Long playerId);
 
     // 0 considered as null meaning no player for that column
     // methods to find oldest group based on country

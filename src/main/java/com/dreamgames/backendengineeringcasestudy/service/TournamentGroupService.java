@@ -1,5 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +15,12 @@ public class TournamentGroupService {
 
     public TournamentGroupService(TournamentGroupRepository tournamentGroupRepository) {
         this.tournamentGroupRepository = tournamentGroupRepository;
+    }
+
+    public boolean isPlayerInActiveTournament(Long tournamentId, Long playerId) {
+        List<TournamentGroup> group = tournamentGroupRepository.findPlayerInActiveTournament(
+                tournamentId, playerId);
+        return group.size() > 0;
     }
 
     // save player to group dynamically by country

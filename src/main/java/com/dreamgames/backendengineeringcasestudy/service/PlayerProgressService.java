@@ -23,4 +23,8 @@ public class PlayerProgressService {
         return playerProgressRepository.findByPlayerId(playerId);
     }
 
+    public void payTournamentEntryPrice(Long playerId) {
+        playerProgressRepository.decreaseThousandCoin(playerId);
+    }
+
 }

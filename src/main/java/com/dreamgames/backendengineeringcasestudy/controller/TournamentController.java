@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dreamgames.backendengineeringcasestudy.model.Player;
 import com.dreamgames.backendengineeringcasestudy.model.PlayerProgress;
 import com.dreamgames.backendengineeringcasestudy.model.Tournament;
+import com.dreamgames.backendengineeringcasestudy.model.TournamentGroup;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerProgressService;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerService;
+import com.dreamgames.backendengineeringcasestudy.service.TournamentGroupService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentStatusService;
 
@@ -23,13 +25,16 @@ public class TournamentController {
     private final TournamentService tournamentService;
     private final PlayerService playerService;
     private final TournamentStatusService tournamentStatusService;
+    private final TournamentGroupService tournamentGroupService;
     private final PlayerProgressService playerProgressService;
 
     public TournamentController(TournamentService tournamentService, PlayerService playerService,
-            TournamentStatusService tournamentStatusService, PlayerProgressService playerProgressService) {
+            TournamentStatusService tournamentStatusService, PlayerProgressService playerProgressService,
+            TournamentGroupService tournamentGroupService) {
         this.tournamentService = tournamentService;
         this.playerService = playerService;
         this.tournamentStatusService = tournamentStatusService;
+        this.tournamentGroupService = tournamentGroupService;
         this.playerProgressService = playerProgressService;
     }
 
@@ -66,10 +71,18 @@ public class TournamentController {
             if (!currTournament.getIsActive()) {
                 return ResponseEntity.status(404).body("No active tournament found");
             }
-            // TODO assign player to group (TournamentGroupService)
+            // check if user is already in active tournament
+            if (tournamentGroupService.isPlayerInActiveTournament(currTournament.getId(), player.getId())) {
+                return ResponseEntity.status(400)
+                        .body("Player with id " + playerId + " is already in the active tournament");
+            }
+            // decrease user coin by 1000
+            playerProgressService.payTournamentEntryPrice(player.getId());
+            // assign player to group (TournamentGroupService)
+            TournamentGroup assignedGroup = tournamentGroupService.assignPlayerToTournament(player,
+                    currTournament.getId());
+            return ResponseEntity.status(201).body(assignedGroup);
             // TODO format group to groupleaderboard
-            // TODO decrease user coin by 1000
-            return ResponseEntity.status(200).body("Player entered the tournament");
 
         } catch (NumberFormatException e) {
             return ResponseEntity.status(400).body("playerId must be a number: " + playerId);
