@@ -14,9 +14,11 @@ import com.dreamgames.backendengineeringcasestudy.model.PlayerInfo;
 import com.dreamgames.backendengineeringcasestudy.model.PlayerProgress;
 import com.dreamgames.backendengineeringcasestudy.model.PlayerToAdd;
 import com.dreamgames.backendengineeringcasestudy.model.RewardClaimed;
+import com.dreamgames.backendengineeringcasestudy.model.Tournament;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerProgressService;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerService;
 import com.dreamgames.backendengineeringcasestudy.service.RewardClaimedService;
+import com.dreamgames.backendengineeringcasestudy.service.TournamentStatusService;
 
 @RestController
 @RequestMapping("api/v1/player")
@@ -24,12 +26,14 @@ public class PlayerController {
     private final PlayerService playerService;
     private final PlayerProgressService playerProgressService;
     private final RewardClaimedService rewardClaimedService;
+    private final TournamentStatusService tournamentStatusService;
 
     public PlayerController(PlayerService playerService, PlayerProgressService playerProgressService,
-            RewardClaimedService rewardClaimedService) {
+            RewardClaimedService rewardClaimedService, TournamentStatusService tournamentStatusService) {
         this.playerService = playerService;
         this.playerProgressService = playerProgressService;
         this.rewardClaimedService = rewardClaimedService;
+        this.tournamentStatusService = tournamentStatusService;
     }
 
     @GetMapping
@@ -78,4 +82,10 @@ public class PlayerController {
             return "An error occurred";
         }
     }
+
+    @GetMapping("tournament")
+    public Tournament getCurrentTournament() {
+        return tournamentStatusService.getTournament();
+    }
+
 }

@@ -26,3 +26,26 @@ CREATE TABLE if not exists reward_claimed (
     is_claimed BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (player_id) REFERENCES player(id)
 );
+
+CREATE TABLE if not exists tournament (
+	id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE if not exists tournament_group (
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    tournament_id INT NOT NULL,
+    turkish_player INT DEFAULT 0,
+    turkish_score INT DEFAULT 0,
+    us_player INT DEFAULT 0,
+    us_score INT DEFAULT 0,
+    uk_player INT DEFAULT 0,
+    uk_score INT DEFAULT 0,
+    french_player INT DEFAULT 0,
+    french_score INT DEFAULT 0,
+    german_player INT DEFAULT 0,
+    german_score INT DEFAULT 0,
+    num_players INT DEFAULT 0,
+    created_at DATE NOT NULL,
+    FOREIGN KEY (tournament_id) REFERENCES tournament(id) ON UPDATE CASCADE ON DELETE NO ACTION
+);

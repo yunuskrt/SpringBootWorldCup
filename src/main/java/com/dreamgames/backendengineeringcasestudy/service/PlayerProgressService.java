@@ -19,4 +19,8 @@ public class PlayerProgressService {
         return createdPlayerProgress;
     }
 
+    public PlayerProgress getByPlayerId(Long playerId) {
+        return playerProgressRepository.findByPlayerId(playerId);
+    }
+
 }

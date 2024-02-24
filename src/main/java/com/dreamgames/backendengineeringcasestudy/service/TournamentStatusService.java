@@ -1,40 +1,56 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
 import java.time.LocalTime;
+import java.util.Optional;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.dreamgames.backendengineeringcasestudy.model.Tournament;
+
 @Service
 public class TournamentStatusService {
-    private boolean tournamentActive;
+    private Tournament tournament;
+    private final TournamentService tournamentService;
 
-    public TournamentStatusService() {
+    public TournamentStatusService(TournamentService tournamentService) {
+        this.tournamentService = tournamentService;
         LocalTime currentTime = LocalTime.now();
         LocalTime startTime = LocalTime.of(0, 0, 0);
         LocalTime endTime = LocalTime.of(20, 0, 0);
 
         if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
-            this.tournamentActive = true;
+            Optional<Tournament> activeTournament = tournamentService.getActiveTournament();
+            if (activeTournament.isPresent()) {
+                this.tournament = activeTournament.get();
+            } else {
+                this.tournament = new Tournament(false);
+            }
         } else {
-            this.tournamentActive = false;
+            this.tournament = new Tournament(false);
         }
-        System.out.println(tournamentActive);
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     private void startTournament() {
-        this.tournamentActive = true;
+
+        // add new tournament is_active = true
+        Tournament tournamentToAdd = new Tournament(true);
+        Tournament newTournament = tournamentService.addNewTournament(tournamentToAdd);
+        this.tournament = newTournament;
+
     }
 
     @Scheduled(cron = "0 0 20 * * *")
     private void endTournament() {
-        this.tournamentActive = false;
-        System.out.println(tournamentActive);
+        this.tournament = new Tournament(false);
+        // deactivate old tournaments
+        tournamentService.deActivateTournaments();
+        // set related claim rewards to true for users
     }
 
-    public boolean getTournamentStatus() {
-        return tournamentActive;
+    public Tournament getTournament() {
+        return tournament;
     }
 
 }

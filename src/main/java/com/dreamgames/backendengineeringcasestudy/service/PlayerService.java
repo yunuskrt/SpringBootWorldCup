@@ -1,6 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,10 @@ public class PlayerService {
 
     public List<Player> getAllPlayers() {
         return playerRepository.findAll();
+    }
+
+    public Optional<Player> getPlayerById(Long id) {
+        return playerRepository.findById(id);
     }
 
     public Player addNewPlayer(Player player) {
