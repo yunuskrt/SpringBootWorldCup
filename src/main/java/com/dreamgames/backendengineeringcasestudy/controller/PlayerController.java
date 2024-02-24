@@ -1,10 +1,13 @@
 package com.dreamgames.backendengineeringcasestudy.controller;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +18,11 @@ import com.dreamgames.backendengineeringcasestudy.model.PlayerProgress;
 import com.dreamgames.backendengineeringcasestudy.model.PlayerToAdd;
 import com.dreamgames.backendengineeringcasestudy.model.RewardClaimed;
 import com.dreamgames.backendengineeringcasestudy.model.Tournament;
+import com.dreamgames.backendengineeringcasestudy.model.TournamentGroup;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerProgressService;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerService;
 import com.dreamgames.backendengineeringcasestudy.service.RewardClaimedService;
+import com.dreamgames.backendengineeringcasestudy.service.TournamentGroupService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentStatusService;
 
 @RestController
@@ -27,13 +32,16 @@ public class PlayerController {
     private final PlayerProgressService playerProgressService;
     private final RewardClaimedService rewardClaimedService;
     private final TournamentStatusService tournamentStatusService;
+    private final TournamentGroupService tournamentGroupService;
 
     public PlayerController(PlayerService playerService, PlayerProgressService playerProgressService,
-            RewardClaimedService rewardClaimedService, TournamentStatusService tournamentStatusService) {
+            RewardClaimedService rewardClaimedService, TournamentStatusService tournamentStatusService,
+            TournamentGroupService tournamentGroupService) {
         this.playerService = playerService;
         this.playerProgressService = playerProgressService;
         this.rewardClaimedService = rewardClaimedService;
         this.tournamentStatusService = tournamentStatusService;
+        this.tournamentGroupService = tournamentGroupService;
     }
 
     @GetMapping
@@ -83,9 +91,35 @@ public class PlayerController {
         }
     }
 
-    @GetMapping("tournament")
-    public Tournament getCurrentTournament() {
-        return tournamentStatusService.getTournament();
+    @PutMapping("level/{playerId}")
+    public ResponseEntity<?> updateLevel(@PathVariable Long playerId) {
+        try {
+            // check if player exists
+            Optional<Player> optionalPlayer = playerService.getPlayerById(playerId);
+            if (!optionalPlayer.isPresent()) {
+                return ResponseEntity.status(404).body("Player not found");
+            }
+            // update level
+            playerProgressService.updateLevel(playerId);
+            PlayerProgress updatedPlayerProgress = playerProgressService.getByPlayerId(playerId);
+
+            Tournament tournament = tournamentStatusService.getTournament();
+            if (tournament.getIsActive()) {
+                Optional<TournamentGroup> optionalGroup = tournamentGroupService.getActiveGroupForPlayer(
+                        tournament.getId(),
+                        playerId);
+                // check if player is in a started group
+                if (optionalGroup.isPresent()) {
+                    TournamentGroup group = optionalGroup.get();
+                    // update user score based on country
+                    Player player = optionalPlayer.get();
+                    tournamentGroupService.increaseUserScore(player, group.getId());
+                }
+            }
+            return ResponseEntity.status(201).body(updatedPlayerProgress);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred");
+        }
     }
 
 }

@@ -25,6 +25,8 @@ public class TournamentGroup {
     private int frenchScore = 0;
     private Long germanPlayer = Long.valueOf(0);
     private int germanScore = 0;
+    private int numPlayers = 0;
+    private boolean isStarted = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public TournamentGroup() {
@@ -44,6 +46,8 @@ public class TournamentGroup {
         this.ukScore = 0;
         this.frenchScore = 0;
         this.germanScore = 0;
+        this.numPlayers = 1;
+        this.isStarted = false;
     }
 
     public TournamentGroup(Long tournamentId,
@@ -52,7 +56,7 @@ public class TournamentGroup {
             Long ukPlayer,
             int ukScore,
             Long frenchPlayer, int frenchScore,
-            Long germanPlayer, int germanScore, LocalDateTime createdAt) {
+            Long germanPlayer, int germanScore, int numPlayers, boolean isStarted, LocalDateTime createdAt) {
         this.tournamentId = tournamentId;
         this.turkishPlayer = turkishPlayer;
         this.turkishScore = turkishScore;
@@ -64,6 +68,8 @@ public class TournamentGroup {
         this.frenchScore = frenchScore;
         this.germanPlayer = germanPlayer;
         this.germanScore = germanScore;
+        this.numPlayers = numPlayers;
+        this.isStarted = isStarted;
         this.createdAt = createdAt;
     }
 
@@ -161,6 +167,22 @@ public class TournamentGroup {
 
     public void setGermanScore(int germanScore) {
         this.germanScore = germanScore;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public void setNumPlayers(int numPlayers) {
+        this.numPlayers = numPlayers;
+    }
+
+    public boolean getIsStarted() {
+        return isStarted;
+    }
+
+    public void setIsStarted(boolean isStarted) {
+        this.isStarted = isStarted;
     }
 
     public LocalDateTime getCreatedAt() {

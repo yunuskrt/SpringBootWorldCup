@@ -27,4 +27,7 @@ public class PlayerProgressService {
         playerProgressRepository.decreaseThousandCoin(playerId);
     }
 
+    public void updateLevel(Long playerId) {
+        playerProgressRepository.increaseLevel(playerId);
+    }
 }

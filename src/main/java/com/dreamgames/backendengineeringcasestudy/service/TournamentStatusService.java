@@ -17,7 +17,7 @@ public class TournamentStatusService {
         this.tournamentService = tournamentService;
         LocalTime currentTime = LocalTime.now();
         LocalTime startTime = LocalTime.of(0, 0, 0);
-        LocalTime endTime = LocalTime.of(23, 0, 0);
+        LocalTime endTime = LocalTime.of(20, 0, 0);
 
         if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
             Optional<Tournament> activeTournament = tournamentService.getActiveTournament();
@@ -31,7 +31,7 @@ public class TournamentStatusService {
         }
     }
 
-    @Scheduled(cron = "0 15 23 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     private void startTournament() {
 
         // add new tournament is_active = true
@@ -41,7 +41,7 @@ public class TournamentStatusService {
 
     }
 
-    @Scheduled(cron = "0 59 23 * * *")
+    @Scheduled(cron = "0 0 20 * * *")
     private void endTournament() {
         this.tournament = new Tournament(false);
         // deactivate old tournaments

@@ -20,4 +20,10 @@ public interface PlayerProgressRepository extends JpaRepository<PlayerProgress, 
     @Query("UPDATE PlayerProgress pp SET pp.coin = pp.coin - 1000 WHERE pp.playerId = ?1")
     @Transactional
     public void decreaseThousandCoin(Long playerId);
+
+    @Modifying
+    @Query("UPDATE PlayerProgress pp SET pp.level = pp.level + 1 WHERE pp.playerId = ?1")
+    @Transactional
+    public void increaseLevel(Long playerId);
+
 }

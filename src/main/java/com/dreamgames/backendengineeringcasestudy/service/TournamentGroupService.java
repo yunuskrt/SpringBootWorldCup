@@ -23,6 +23,26 @@ public class TournamentGroupService {
         return group.size() > 0;
     }
 
+    public Optional<TournamentGroup> getActiveGroupForPlayer(Long tournamentId, Long playerId) {
+        return tournamentGroupRepository.findActiveGroupForPlayer(tournamentId, playerId);
+    }
+
+    public void increaseUserScore(Player player, Long groupId) {
+        String country = player.getCountry();
+        if (country.equals("Turkey")) {
+            tournamentGroupRepository.increaseTurkishScore(groupId);
+        } else if (country.equals("United States")) {
+            tournamentGroupRepository.increaseUSScore(groupId);
+        } else if (country.equals("United Kingdom")) {
+            tournamentGroupRepository.increaseUKScore(groupId);
+        } else if (country.equals("France")) {
+            tournamentGroupRepository.increaseFrenchScore(groupId);
+        } else {
+            tournamentGroupRepository.increaseGermanScore(groupId);
+        }
+
+    }
+
     // save player to group dynamically by country
     public TournamentGroup assignPlayerToTournament(Player player, Long tournamentId) {
         String country = player.getCountry();
@@ -34,6 +54,11 @@ public class TournamentGroupService {
                 // update turkish column in group table
                 tournamentGroupRepository.saveTurkishPlayer(playerId, group.getId());
                 group.setTurkishPlayer(playerId);
+                group.setNumPlayers(group.getNumPlayers() + 1);
+                if (group.getNumPlayers() + 1 == 5) {
+                    tournamentGroupRepository.startGroup(group.getId());
+                    group.setIsStarted(true);
+                }
                 return group;
             }
             // construct new group with only turkish player
@@ -47,6 +72,11 @@ public class TournamentGroupService {
                 // update us column in group table
                 tournamentGroupRepository.saveUSPlayer(playerId, group.getId());
                 group.setUsPlayer(playerId);
+                group.setNumPlayers(group.getNumPlayers() + 1);
+                if (group.getNumPlayers() == 5) {
+                    tournamentGroupRepository.startGroup(group.getId());
+                    group.setIsStarted(true);
+                }
                 return group;
             }
             // construct new group with only us player
@@ -59,6 +89,11 @@ public class TournamentGroupService {
                 // update uk column in group table
                 tournamentGroupRepository.saveUKPlayer(playerId, group.getId());
                 group.setUkPlayer(playerId);
+                group.setNumPlayers(group.getNumPlayers() + 1);
+                if (group.getNumPlayers() == 5) {
+                    tournamentGroupRepository.startGroup(group.getId());
+                    group.setIsStarted(true);
+                }
                 return group;
             }
             // construct new group with only uk player
@@ -71,6 +106,11 @@ public class TournamentGroupService {
                 // update french column in group table
                 tournamentGroupRepository.saveFrenchPlayer(playerId, group.getId());
                 group.setFrenchPlayer(playerId);
+                group.setNumPlayers(group.getNumPlayers() + 1);
+                if (group.getNumPlayers() == 5) {
+                    tournamentGroupRepository.startGroup(group.getId());
+                    group.setIsStarted(true);
+                }
                 return group;
             }
             // construct new group with only french player
@@ -83,6 +123,11 @@ public class TournamentGroupService {
             // update german column in group table
             tournamentGroupRepository.saveGermanPlayer(playerId, group.getId());
             group.setGermanPlayer(playerId);
+            group.setNumPlayers(group.getNumPlayers() + 1);
+            if (group.getNumPlayers() == 5) {
+                tournamentGroupRepository.startGroup(group.getId());
+                group.setIsStarted(true);
+            }
             return group;
         }
         // construct new group with only german player
