@@ -27,6 +27,10 @@ public class TournamentGroupService {
         return tournamentGroupRepository.findActiveGroupForPlayer(tournamentId, playerId);
     }
 
+    public List<TournamentGroup> getActiveGroupsForTournament(Long tournamentId) {
+        return tournamentGroupRepository.findActiveGroupsForTournament(tournamentId);
+    }
+
     public void increaseUserScore(Player player, Long groupId) {
         String country = player.getCountry();
         if (country.equals("Turkey")) {

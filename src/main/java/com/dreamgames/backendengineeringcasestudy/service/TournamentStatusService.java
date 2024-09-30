@@ -12,9 +12,11 @@ import com.dreamgames.backendengineeringcasestudy.model.Tournament;
 public class TournamentStatusService {
     private Tournament tournament;
     private final TournamentService tournamentService;
+    private final RewardClaimedService rewardClaimedService;
 
-    public TournamentStatusService(TournamentService tournamentService) {
+    public TournamentStatusService(TournamentService tournamentService, RewardClaimedService rewardClaimedService) {
         this.tournamentService = tournamentService;
+        this.rewardClaimedService = rewardClaimedService;
         LocalTime currentTime = LocalTime.now();
         LocalTime startTime = LocalTime.of(0, 0, 0);
         LocalTime endTime = LocalTime.of(20, 0, 0);
@@ -31,7 +33,7 @@ public class TournamentStatusService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 46 4 * * *")
     private void startTournament() {
 
         // add new tournament is_active = true
@@ -41,8 +43,10 @@ public class TournamentStatusService {
 
     }
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Scheduled(cron = "0 49 4 * * *")
     private void endTournament() {
+        // assign rewards
+        rewardClaimedService.assignRewardsToHighestPlayers(tournament.getId());
         this.tournament = new Tournament(false);
         // deactivate old tournaments
         tournamentService.deActivateTournaments();

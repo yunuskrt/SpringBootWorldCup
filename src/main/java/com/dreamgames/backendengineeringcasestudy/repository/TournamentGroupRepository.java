@@ -21,6 +21,9 @@ public interface TournamentGroupRepository extends JpaRepository<TournamentGroup
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.isStarted = true AND tg.tournamentId = :tournamentId  AND :playerId IN (tg.turkishPlayer, tg.usPlayer, tg.ukPlayer, tg.frenchPlayer, tg.germanPlayer)")
     Optional<TournamentGroup> findActiveGroupForPlayer(Long tournamentId, Long playerId);
 
+    @Query("SELECT tg FROM TournamentGroup tg WHERE tg.isStarted = true AND tg.tournamentId = :tournamentId")
+    List<TournamentGroup> findActiveGroupsForTournament(Long tournamentId);
+
     // 0 considered as null meaning no player for that column
     // methods to find oldest group based on country
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.turkishPlayer = 0 ORDER BY tg.createdAt ASC LIMIT 1")

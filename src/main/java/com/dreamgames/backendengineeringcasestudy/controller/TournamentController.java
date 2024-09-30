@@ -15,6 +15,7 @@ import com.dreamgames.backendengineeringcasestudy.model.Tournament;
 import com.dreamgames.backendengineeringcasestudy.model.TournamentGroup;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerProgressService;
 import com.dreamgames.backendengineeringcasestudy.service.PlayerService;
+import com.dreamgames.backendengineeringcasestudy.service.RewardClaimedService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentGroupService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentService;
 import com.dreamgames.backendengineeringcasestudy.service.TournamentStatusService;
@@ -27,15 +28,17 @@ public class TournamentController {
     private final TournamentStatusService tournamentStatusService;
     private final TournamentGroupService tournamentGroupService;
     private final PlayerProgressService playerProgressService;
+    private final RewardClaimedService rewardClaimedService;
 
     public TournamentController(TournamentService tournamentService, PlayerService playerService,
             TournamentStatusService tournamentStatusService, PlayerProgressService playerProgressService,
-            TournamentGroupService tournamentGroupService) {
+            TournamentGroupService tournamentGroupService, RewardClaimedService rewardClaimedService) {
         this.tournamentService = tournamentService;
         this.playerService = playerService;
         this.tournamentStatusService = tournamentStatusService;
         this.tournamentGroupService = tournamentGroupService;
         this.playerProgressService = playerProgressService;
+        this.rewardClaimedService = rewardClaimedService;
     }
 
     @GetMapping("/active")
@@ -69,13 +72,19 @@ public class TournamentController {
             // check if there is an active tournament
             Tournament currTournament = tournamentStatusService.getTournament();
             if (!currTournament.getIsActive()) {
-                return ResponseEntity.status(404).body("No active tournament found");
+                return ResponseEntity.status(400).body("No active tournament found");
             }
             // check if user is already in active tournament
             if (tournamentGroupService.isPlayerInActiveTournament(currTournament.getId(), player.getId())) {
                 return ResponseEntity.status(400)
                         .body("Player with id " + playerId + " is already in the active tournament");
             }
+            // TODO check if user claimed last tournaments reward
+            if (!rewardClaimedService.isPlayerClaimedReward(player.getId())) {
+                return ResponseEntity.status(400)
+                        .body("Player with id " + playerId + " not claimed reward from previous tournament");
+            }
+
             // decrease user coin by 1000
             playerProgressService.payTournamentEntryPrice(player.getId());
             // assign player to group (TournamentGroupService)
